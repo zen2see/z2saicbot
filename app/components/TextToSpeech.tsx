@@ -2,7 +2,7 @@
 'use client'
 
 import { FormEvent, useState } from "react"
-import { sendTextToOpenAI } from "../utils/sendTextToOpenAi"
+import { sendTextToOpenAi } from "../utils/sendTextToOpenAi"
 
 export const TextToSpeech = () => {
   const [userText, setUserText] = useState('')
@@ -11,11 +11,11 @@ export const TextToSpeech = () => {
   const voices = synth?.getVoices()
   // console.log('Voices:', voices)
   // const selectedVoices = voices?.find((voice) => voice.name == 'Google 日本語')
-  const selectedVoices = voices?.find((voice) => voice.name == 'Albert')
+  const selectedVoices = voices?.find((voice) => voice.name == 'Zira')
   const speak = (textToSpeak: string) => {
     const utterance = new SpeechSynthesisUtterance(textToSpeak)
     utterance.voice = selectedVoices!
-    utterance.rate = 0.3
+    utterance.rate = 0.2
     synth?.speak(utterance)
     setIsLoading(true)
     utterance.onend =() => {
@@ -24,8 +24,9 @@ export const TextToSpeech = () => {
   }
   const handleUserText = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setIsLoading(true)
     try {
-      const message = await sendTextToOpenAI(userText)
+      const message = await sendTextToOpenAi(userText)
       speak(message)
     } catch (error) {
       let message = ''
