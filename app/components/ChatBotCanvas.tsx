@@ -2,8 +2,9 @@
 
 import { OrbitControls, useAnimations, useGLTF, SpotLight } from '@react-three/drei'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import React, { useEffect, useRef } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Vector3 } from 'three'
+import { AppContext } from '../context/isPlayingcontext'
 
 const Torch = ({vec = new Vector3(), ...props}) => {
   const light = useRef<THREE.SpotLight>(null)
@@ -37,11 +38,19 @@ const Head = () => {
   // console.log(model)
   const animation = useAnimations(model.animations, model.scene)
   const action = animation.actions.Animation
-  console.log(action)
+  const { isPlaying, setIsPlaying } = useContext(AppContext)
+
   useEffect(() => {
-    // action?.play()
-    // action?.stop()
-  }, [action])
+    if (isPlaying) {
+      action?.play()
+    } else {
+      action?.fadeOut(0.5)
+      setTimeout(() => {
+        action?.stop()
+      }, 500)
+    }
+  }, [isPlaying, action])
+  console.log(action)
   return (
     <>
       <primitive object={model.scene} scale={3} rotation-z={0.2} />

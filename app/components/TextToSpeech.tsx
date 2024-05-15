@@ -1,8 +1,9 @@
 
 'use client'
 
-import { FormEvent, useState } from "react"
+import { FormEvent, useContext, useState } from "react"
 import { sendTextToOpenAi } from "../utils/sendTextToOpenAi"
+import { AppContext } from "../context/isPlayingcontext"
 
 export const TextToSpeech = () => {
   const [userText, setUserText] = useState('')
@@ -12,18 +13,22 @@ export const TextToSpeech = () => {
   // console.log('Voices:', voices)
   // const selectedVoices = voices?.find((voice) => voice.name == 'Google 日本語')
   const selectedVoices = voices?.find((voice) => voice.name == 'Zira')
+  const { isPlaying, setIsPlaying } = useContext(AppContext)
   const speak = (textToSpeak: string) => {
     const utterance = new SpeechSynthesisUtterance(textToSpeak)
     utterance.voice = selectedVoices!
-    utterance.rate = 0.2
+    utterance.rate = 0.8
     synth?.speak(utterance)
-    setIsLoading(true)
-    utterance.onend =() => {
-      setIsLoading(false)
+    // setIsLoading(true)
+    setIsPlaying(true)
+    utterance.onend = () => {
+      // setIsLoading(false)
+      setIsPlaying(false)
     }
   }
-  const handleUserText = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  // const handleUserText = async (e: FormEvent<HTMLFormElement>) => {
+  async function handleUserText(event: FormEvent<HTMLFormElement>) {  
+    event.preventDefault()
     setIsLoading(true)
     try {
       const message = await sendTextToOpenAi(userText)
